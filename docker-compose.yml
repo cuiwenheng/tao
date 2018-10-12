@@ -1,0 +1,62 @@
+
+# mysql:
+#   image: mysql/mysql-server:5.7
+#   container_name: xchxmysql
+#   restart: always
+#   environment:
+#     - MYSQL_ROOT_PASSWORD=mtmxiaochengxu
+#     - MYSQL_DATABASE=cAuth
+#   volumes:
+#     - /opt/data/mtm/xiaochengxu3/mysql:/var/lib/mysql
+#     - ./mysql/config/my.cnf:/etc/my.cnf
+#     - ./mysql/init/:/docker-entrypoint-initdb.d/
+#   expose:
+#     - "3306"
+#   ports:
+#     - "3306:3306"
+
+# adminer:
+#   image: adminer
+#   container_name: xchxadminer
+#   restart: always
+#   ports:
+#     - "9999:8080"
+
+tao:
+  #image: mtm:latest //nodejs updated to v6.12.3  by angel and rain 2018.1.11
+  image: tao:latest
+  container_name: tao
+  hostname: tao
+  mem_limit: 1024m
+  restart: always
+  ports:
+    - "127.0.0.1:6666:6666"
+  expose:
+    - "6666"
+  # links:
+  #   - mysql:mysql
+  volumes:
+    - ./:/usr/src/app
+
+# nginx to forward request, may split it out in future
+nginx:
+  image: yeasy/nginx
+  container_name: taonginx
+  hostname: nginx
+  restart: always
+  links:
+    - tao:tao
+    # - adminer:adminer
+  volumes:
+    - ./nginx.conf:/etc/nginx/nginx.default.conf
+    - /opt/data/mtm/nginx/log/:/var/log/nginx/
+    # - ./server/certificate/:/etc/nginx/certificate/
+  ports:
+    - "80:80"
+    # - "443:443"
+  environment:
+    - BACKEND=tao
+    - PORT=6666
+    # - USERNAME=mtmuser
+    # - PASSWORD=pass4dev
+
