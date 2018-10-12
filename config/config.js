@@ -1,6 +1,6 @@
 const path = require('path');
 const CONF = {
-    port: '5757',
+    port: '6666',
     rootPath:path.resolve(__dirname, '../')
 }
 
